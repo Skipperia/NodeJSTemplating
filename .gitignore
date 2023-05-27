@@ -1,0 +1,20 @@
+# Dependency directories
+node_modules/
+
+# Compiled TypeScript code
+/dist
+
+# IDE / editor directories
+.vscode/
+
+# Logs
+*.log
+
+# npm cache directory
+.npm
+
+# my env vars
+.env
+
+# currently ignoring package-lock
+package-lock.json
