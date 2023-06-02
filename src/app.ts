@@ -1,16 +1,32 @@
 import express, { Router, Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import winston from 'winston';
 import { apiRouter } from './routes';
+import { format } from 'path';
 
 dotenv.config();
 
 const secretKey: string | undefined = process.env.SECRET_KEY;
+const logPath: string = process.env.LOG_PATH || "logs/app.log";
 
 if (!secretKey) {
     throw new Error('SECRET_KEY is not defined');
 }
 
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(
+        winston.format.simple()
+    ),
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: logPath })
+        
+    ]
+});
+
+logger.info(`~~~~ LOGGER INITIATED AT:${logPath}`);
 
 const app = express();
 app.use(express.json());
