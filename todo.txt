@@ -1,0 +1,9 @@
+dockerfile
+db access
+Middleware
+add more routes
+add some ui
+get on aws
+apply scaling
+add redis support
+kafka
