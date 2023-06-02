@@ -3,6 +3,7 @@ node_modules/
 
 # Compiled TypeScript code
 /dist
+/target
 
 # IDE / editor directories
 .vscode/
