@@ -1,7 +1,7 @@
 import express, { Router, Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
-import * as dotenv from 'dotenv';
-import exampleRouter from './routes/exampleRoutes'
+import dotenv from 'dotenv';
+import { apiRouter } from './routes';
 
 dotenv.config();
 
@@ -57,7 +57,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
 
 //Add all routers
-app.use('/example', router);
+app.use('/api', apiRouter);
 
 //Base of the app
 app.get('/', (req: Request, res: Response) => {
