@@ -3,7 +3,6 @@ import * as jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import winston from 'winston';
 import { apiRouter } from './routes';
-import { format } from 'path';
 
 dotenv.config();
 

@@ -1,20 +1,23 @@
-# Base image
-FROM node:19.6-alpine3.17
+# Random node base
+FROM node:slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package.json and its variants (maybe lock?)
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --production
+RUN npm install
 
 # Copy the rest of the application code
-COPY . .
+COPY . /app
 
 # Build the TypeScript project
 RUN npm run build
 
+# Expose the port for the app
+EXPOSE 5000
+
 # Start the application
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/app.js"]
