@@ -1,6 +1,6 @@
 {
   "name": "nodejstemplating",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "commonjs",
   "description": "Pre-interviews templating for basic node applications",
   "main": "dist/app.js",
