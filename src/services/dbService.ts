@@ -1,8 +1,11 @@
-import { MongoClient } from 'mongodb';
+import { Collection, Db, MongoClient } from 'mongodb';
 import Redis from 'ioredis';
 
 import { logger } from '../utils/logger';
 
+interface Product extends Document {
+    _id: string;
+}
 
 
 const dbConnectionStatus: any = {
@@ -12,7 +15,7 @@ const dbConnectionStatus: any = {
 
 //init mongoDb client
 const mongodbHost: string = process.env.REDIS_HOST || 'localhost';
-const mongodbPort: number = Number(process.env.REDIS_PORT) || 6379;
+const mongodbPort: number = Number(process.env.REDIS_PORT) || 27017;
 const mongoClient = new MongoClient(`mongodb://${mongodbHost}:${mongodbPort}`);
 
 
@@ -26,25 +29,23 @@ const redis = new Redis({
 
 
 
-const getProductById = async (id: string) => {
+const getProductById = async (id: string): Promise<Product | null> => {
     const redisKey = `product:${id}`;
 
-    // Try to fetch from Redis first
-    let data = await redis.get(redisKey);
+    let data: string | null = await redis.get(redisKey);
     if (data) {
-        return JSON.parse(data);
+        return JSON.parse(data) as Product;
     }
 
     // If not in Redis, fetch from MongoDB
-    const db = mongoClient.db('testdb');
-    const collection = db.collection('posts');
-    const query = { _id: id };
-    data = await collection.findOne(query);
+    const db: Db = mongoClient.db('testdb');
+    const collection: Collection<Product> = db.collection('products');
+    const product: Product | null = await collection.findOne({ _id: id });
 
-    if (data) {
+    if (product) {
         // Store in Redis for future use
-        await redis.set(redisKey, JSON.stringify(data));
-        return data;
+        await redis.set(redisKey, JSON.stringify(product));
+        return product;
     } else {
         return null;
     }
@@ -67,3 +68,7 @@ redis.on('error', (error) => {
     logger.error(`Failed connecting to redis:${redisHost}:${redisPort} error: ${error}`);
     throw new Error(`Failed connecting to redis:${redisHost}:${redisPort} error: ${error}`)
 });
+
+export {
+    getProductById
+}

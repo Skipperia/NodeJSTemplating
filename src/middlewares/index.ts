@@ -1,7 +1,6 @@
-import requestLogger from './logger';
-import errorHandler from './logger';
+import { requestLogger, errorHandler } from './logger';
 
-export default {
+export {
     requestLogger,
     errorHandler
 };

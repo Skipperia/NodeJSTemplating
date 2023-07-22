@@ -3,7 +3,12 @@ import * as jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { logger } from './utils/logger';
 import { apiRouter } from './routes';
-import requestLogger from './middlewares'
+import { tokenAuth } from 'middlewares/security';
+
+
+
+
+
 dotenv.config();
 
 const secretKey: string | undefined = process.env.SECRET_KEY;
