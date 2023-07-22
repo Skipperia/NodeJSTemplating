@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { logger } from './utils/logger';
 import { apiRouter } from './routes';
-import { tokenAuth } from 'middlewares/security';
+import { tokenAuth } from 'middleware/security';
 
 
 

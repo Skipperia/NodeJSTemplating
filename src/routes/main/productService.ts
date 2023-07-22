@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from 'express';
-import { requestLogger } from '../../middlewares'
+import { requestLogger } from '../../middleware'
 import { getProductById } from '../../services/dbService'
 
 const router = Router();
