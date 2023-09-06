@@ -5,9 +5,10 @@ import { getProductById } from '../../services/dbService'
 const router = Router();
 
 // Define your routes
-router.get('/', requestLogger, async (req: Request, res: Response) => {
-  await getProductById("");
-  res.send('This is the product route.');
+router.get('/:id', requestLogger, async (req: Request, res: Response) => {
+  const productIdRequested = req?.params?.id;
+  const retVal = await getProductById(productIdRequested);
+  res.json(retVal);
 });
 
 export { router as productService };
