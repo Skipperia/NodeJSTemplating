@@ -10,9 +10,13 @@ const tokenAuth = (Request: Request, Response: Response, next: NextFunction) => 
     next();
 }
 
-const sanitizeRequest = () => { };
+const sanitizeRequest = (Request: Request, Response: Response, next: NextFunction) => {
+    //sanitize request here
+    next();
+};
 
-export {
+export const securiryMiddleWares = {
     basicAuth,
-    tokenAuth
+    tokenAuth,
+    sanitizeRequest
 }

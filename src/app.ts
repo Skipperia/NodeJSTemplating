@@ -3,9 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { logger } from './utils/logger';
 import { apiRouter } from './routes';
-import { tokenAuth } from 'middleware/security';
-
-
+import { requestLogger, securiryMiddleWares } from './middleware';
 
 
 
@@ -22,7 +20,7 @@ app.use(express.json());
 
 
 //Add all routers
-app.use('/api', apiRouter);
+app.use('/api', securiryMiddleWares.tokenAuth, securiryMiddleWares.sanitizeRequest, requestLogger, apiRouter);
 
 //Base of the app
 app.get('/', (req: Request, res: Response) => {
