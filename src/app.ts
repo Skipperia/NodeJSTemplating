@@ -1,34 +1,36 @@
-import express, { Router, Request, Response, NextFunction } from 'express';
-import * as jwt from 'jsonwebtoken';
+import express, {Request, Response} from 'express';
+import {WebSocket} from 'ws';
+import http from 'http';
 import dotenv from 'dotenv';
-import { logger } from './utils/logger';
-import { apiRouter } from './routes';
-import { requestLogger, securiryMiddleWares } from './middleware';
-import expressWs from 'express-ws';
-import { WebSocket } from 'ws';
 
+import {logger} from './utils/logger';
+import {apiRouter} from './routes';
+import {requestLogger, securiryMiddleWares} from './middleware';
 
 
 dotenv.config();
-
 const secretKey: string | undefined = process.env.SECRET_KEY;
-
 if (!secretKey) {
     throw new Error('SECRET_KEY is not defined');
 }
 
+//app server init
 const app = express();
-const appWs = expressWs(app);
+const server = http.createServer(app);
 app.use(express.json());
-const connectedWebsocketClients: WebSocket[] = [];
 
-//Add all routers
+//websocket map - move to somewhere else
+const connectedWebsocketClients: WebSocket[] = [];
+const activeSessions = new Map();
+const wss = new WebSocket.Server({server});
+
+//add all routers
 app.use('/api', securiryMiddleWares.tokenAuth, securiryMiddleWares.sanitizeRequest, requestLogger, apiRouter);
 
 app.get('/about', (req: Request, res: Response) => {
     logger.verbose("About route called");
     res.json({
-        message: 'Welcome to the About page'
+        message: 'about page'
     });
 });
 
@@ -42,28 +44,23 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 
-appWs.app.ws('/websocket', (ws: WebSocket, req) => {
-    connectedWebsocketClients.push(ws);
-    ws.on('open', () => {
-        ws.send("Connected to websocket!!!");
-    });
-    ws.on('message', (message: string) => {
-        ws.send("ayyy");
-    });
-
-    ws.on('close', () => {
-        const index = connectedWebsocketClients.indexOf(ws);
-        if (index !== -1) {
-            connectedWebsocketClients.splice(index, 1);
-        }
-    });
+wss.on('connection', (ws, req) => {
+    const sessionToken: string = req.headers['sec-websocket-protocol'] as string;
+    if (sessionToken) { // check session token
+        activeSessions.set(sessionToken, ws);
+        ws.on('message', (message) => {
+            console.log("ayy got message message")
+        });
+        ws.on('close', () => {
+            activeSessions.delete(sessionToken);
+        });
+    } else {
+        ws.close(4000, 'Invalid session');
+    }
 });
 
 
-
-
-app.listen(5000, () => logger.info('Server started on port 5000'));
-
+server.listen(5000, () => logger.info('Server started on port 5000'));
 
 
 process.on('unhandledRejection', (reason, promise) => {

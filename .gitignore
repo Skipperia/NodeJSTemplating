@@ -7,6 +7,7 @@ node_modules/
 
 # IDE / editor directories
 .vscode/
+.idea
 
 # Logs
 *.log
